@@ -21,7 +21,7 @@ bl_info = {
     "description": "Import/Export .brg model files for the game Age of Mythology",
     "author": "Matthijs 'MrEmjeR' de Rijk <mrtherich@gmail.com>",
     "version": (0, 2, 0),
-    "blender": (2, 7, 5),
+    "blender": (3, 3, 0),
     "warning": "",
     "location": "File > Import-Export",
     "wiki_url": "https://github.com/MrTheRich/AoM-Blender-Addon/wiki",
@@ -45,26 +45,26 @@ from bpy.props import StringProperty, IntProperty, BoolProperty
 class AoMPreferences(AddonPreferences):
     bl_idname = __name__
 
-    aom_path = StringProperty(
-            name="Path to Age of Mythology Installation",
-            subtype='FILE_PATH',
-            )
-    auto_import = BoolProperty(
-            name="Autmatically import images from AoM",
-            default=True,
-            )
-    comp_path = StringProperty(
-            name="Path to TextureExtractor.exe. (v2)",
-            subtype='FILE_PATH',
-            )
-    glob_tex = BoolProperty(
-            name="Default save converted textures globally. Default \"\\[AoM]\\Textures\\Converted\".",
-            default=True,
-            )
-    tex_path = StringProperty(
-            name="Path for global texture conversion storage.",
-            subtype='FILE_PATH',
-            )
+    aom_path: StringProperty(
+        name="Path to Age of Mythology Installation",
+        subtype='FILE_PATH',
+    )
+    auto_import: BoolProperty(
+        name="Autmatically import images from AoM",
+        default=True,
+    )
+    comp_path: StringProperty(
+        name="Path to TextureExtractor.exe. (v2)",
+        subtype='FILE_PATH',
+    )
+    glob_tex: BoolProperty(
+        name="Default save converted textures globally. Default \"\\[AoM]\\Textures\\Converted\".",
+        default=True,
+    )
+    tex_path: StringProperty(
+        name="Path for global texture conversion storage.",
+        subtype='FILE_PATH',
+    )
 
     def draw(self, context):
         layout = self.layout
@@ -98,7 +98,7 @@ class IMPORT_BRG(bpy.types.Operator, ImportHelper):
             )
 
     def execute(self, context):
-        preferences = context.user_preferences
+        preferences = context.preferences
         addon_prefs = preferences.addons[__name__].preferences
         importer = brg_import.BRGImporter(context, self, addon_prefs)
 
@@ -150,7 +150,7 @@ class EXPORT_BRG(bpy.types.Operator, ExportHelper):
         maxlen=1024, default="")
 
     def execute(self, context):
-        preferences = context.user_preferences
+        preferences = context.preferences
         addon_prefs = preferences.addons[__name__].preferences
         exporter = brg_export.BRGExporter(context, self, addon_prefs)
 
@@ -184,22 +184,24 @@ class EXPORT_BRG(bpy.types.Operator, ExportHelper):
 
 #menu registers
 def menu_func_import(self, context):
-    self.layout.operator(IMPORT_BRG.bl_idname, text="Age of Mythology (.brg)")
+    self.layout.operator(IMPORT_BRG.bl_idname, text="Import Age of Mythology (.brg)")
 
 def menu_func_export(self, context):
-    self.layout.operator(EXPORT_BRG.bl_idname, text="Age of Mythology (.brg)")
+    self.layout.operator(EXPORT_BRG.bl_idname, text="Export Age of Mythology (.brg)")
 
 def register():
-    bpy.utils.register_module(__name__)
+    bpy.utils.register_class(IMPORT_BRG)
+    bpy.utils.register_class(AoMPreferences)
     reload_scripts()
     os.system('cls') # clear the cmd, temponary for debug
-    bpy.types.INFO_MT_file_import.append(menu_func_import)
-    bpy.types.INFO_MT_file_export.append(menu_func_export)
+    bpy.types.TOPBAR_MT_file_import.append(menu_func_import)
+    bpy.types.TOPBAR_MT_file_export.append(menu_func_export)
 
 def unregister():
-    bpy.utils.unregister_module(__name__)
-    bpy.types.INFO_MT_file_import.remove(menu_func_import)
-    bpy.types.INFO_MT_file_export.remove(menu_func_export)
+    bpy.utils.unregister_class(IMPORT_BRG)
+    bpy.utils.unregister_class(AoMPreferences)
+    bpy.types.TOPBAR_MT_file_import.remove(menu_func_import)
+    bpy.types.TOPBAR_MT_file_export.remove(menu_func_export)
 
 def reload_scripts(): # reload all subscripts when reloading main script
     reload(brg_util)
