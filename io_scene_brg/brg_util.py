@@ -246,14 +246,22 @@ def copy_ddt(file, addon_prefs, file_path, texture_name):
     tex_path = os.path.join(addon_prefs.aom_path, "textures", texture_name) + '.ddt'
     new_path = os.path.join(file_path, texture_name) + '.tga'
 
+    print("file: " + str(file))
+
     if os.path.isfile(os.path.join(file.file_path, texture_name) + '.ddt'):
         tex_path = os.path.join(file.file_path, texture_name) + '.ddt'
 
     if os.path.isfile(new_path): #file already exsists localy
         return bpy.data.images.load(new_path)
 
+
+    have_compiler_path = os.path.isfile(compiler)
+    have_text_path = os.path.isfile(tex_path)
+    print("have_compiler_path: ", have_compiler_path)
+    print("compiler_path: ", compiler)
+    print("have_text_path: ", have_text_path)
     #try to convert the image from ddt using the TextureExtractor.exe
-    if (os.path.isfile(compiler) and os.path.isfile(tex_path)):
+    if (have_compiler_path and have_text_path):
         print("Trying to convert image to ddt...")
         FNULL = open(os.devnull, 'w')
         args = '"' + compiler + '" -o "' + new_path + '" -i "' + tex_path + '"'
@@ -271,6 +279,8 @@ def copy_ddt(file, addon_prefs, file_path, texture_name):
     # try ot copy the raw ddt over
     try:
         print("Trying to copy image from AoM install folder...")
+        print("aom path: " + aom_path)
+        print("file_path: " + file_path)
         shutil.copy(aom_path, file_path)
         if os.path.isfile(new_path): #file is succesfuly coppied
             return None
@@ -312,11 +322,19 @@ def load_image(file, addon_prefs, texture_name):
                 continue
             else:
                 break
-    print("Still seraching for:", texture_name)
+    print("Still searching for:", texture_name)
     # print (file.addon_prefs.glob_tex)
     # if no readable texture found, try to convert one from ddt
     if not img:
         if addon_prefs.glob_tex and os.path.exists(glob_path):
+            print("searching: " + glob_path)
+            print("searching texture name: " + texture_name)
+
+            # from os import listdir
+            # onlyfiles = [f for f in listdir(glob_path) if os.path.isfile(os.path.join(glob_path, f))]
+            # for file in onlyfiles:
+            #     print(file)
+
             img = copy_ddt(file, addon_prefs, glob_path, texture_name)
         else:
             if os.path.exists(bpy.path.abspath("//")):

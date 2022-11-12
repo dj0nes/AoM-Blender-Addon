@@ -329,16 +329,32 @@ class BRGImporter:
         file.skip(4)
 
         # load or convert the image.
+        print("file str: " + str(file))
         img = load_image(file, self.addon_prefs, texture_name)
         if img:
-            # setup the cycles material
+            # setup the cycle's material
             node_texture = node_tree.nodes.new(type='ShaderNodeTexImage')
             node_texture.image = img
             node_texture.location = -300,350
 
             links = node_tree.links
-            link = links.new(node_texture.outputs[0], node_tree.nodes.get("Diffuse BSDF").inputs[0])
-
+            
+            print("inputs: " + str(len(node_tree.nodes)))
+            for node in node_tree.nodes:
+                print(node.name)
+                print(node.label)
+                print(node)
+            
+            print("outputs: " + str(len(node_texture.outputs)))
+            for node in node_texture.outputs:
+                print(node)
+            
+            diffuse_bsdf_input = node_tree.nodes.get("Diffuse BSDF", {}).get("inputs", [])
+            if len(diffuse_bsdf_input) > 0:
+                link = links.new(node_texture.outputs[0], diffuse_bsdf_input[0])
+            else:
+                print("no Diffuse BSDF node")
+        
         # optional sfx data
         if self.props.has(MatrFlags.SFX):
             file.skip(2)
