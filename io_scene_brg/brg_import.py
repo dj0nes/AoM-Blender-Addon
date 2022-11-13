@@ -349,11 +349,12 @@ class BRGImporter:
             for node in node_texture.outputs:
                 print(node)
             
-            diffuse_bsdf_input = node_tree.nodes.get("Diffuse BSDF", {}).get("inputs", [])
-            if len(diffuse_bsdf_input) > 0:
-                link = links.new(node_texture.outputs[0], diffuse_bsdf_input[0])
-            else:
-                print("no Diffuse BSDF node")
+            diffuse_bsdf = node_tree.nodes.get("ShaderNodeBsdfDiffuse")
+            if diffuse_bsdf is None:
+                diffuse_bsdf = node_tree.nodes.new(type="ShaderNodeBsdfDiffuse")
+            link = links.new(node_texture.outputs["Output One"], diffuse_bsdf.inputs[0])
+            # else:
+            #     print("no Diffuse BSDF node")
         
         # optional sfx data
         if self.props.has(MatrFlags.SFX):
