@@ -100,6 +100,9 @@ class BRGImporter:
             scn.frame_end = math.floor(self.anim_time * scn.render.fps)
         self.frame_len = self.anim_time * scn.render.fps / self.frames
         print ("frame length", self.frame_len)
+        if int(self.frame_len) != self.frame_len:
+            self.frame_len = int(self.frame_len)
+            print ("need frame length as int, converted to: ", self.frame_len)
 
 
 
@@ -351,9 +354,8 @@ class BRGImporter:
             node_texture = node_tree.nodes.new(type='ShaderNodeTexImage')
             node_texture.image = img
             node_texture.location = -300,350
-
             links = node_tree.links
-            link = links.new(node_texture.outputs[0], node_tree.nodes.get("Diffuse BSDF").inputs[0])
+            link = links.new(node_texture.outputs[0], node_tree.nodes.get("Principled BSDF").inputs[0])
 
         # optional sfx data
         if self.props.has(MatrFlags.SFX):

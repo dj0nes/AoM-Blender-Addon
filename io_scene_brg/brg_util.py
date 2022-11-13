@@ -317,7 +317,7 @@ def load_image(file, addon_prefs, texture_name):
                 continue
             else:
                 break
-    print("Still seraching for:", texture_name)
+    print("Still searching for:", texture_name)
     # print (file.addon_prefs.glob_tex)
     # if no readable texture found, try to convert one from ddt
     if not img:
