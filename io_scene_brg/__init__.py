@@ -88,11 +88,11 @@ class IMPORT_BRG(bpy.types.Operator, ImportHelper):
         description="Filepath used for importing the brg file",
         maxlen=1024, default="")
 
-    modify_fps = BoolProperty(
+    modify_fps: BoolProperty(
             name="Modify frame settings",
             default=False,
             )
-    cyclic = BoolProperty(
+    cyclic: BoolProperty(
             name="Cyclic animation",
             default=True,
             )
@@ -189,6 +189,12 @@ def menu_func_import(self, context):
 def menu_func_export(self, context):
     self.layout.operator(EXPORT_BRG.bl_idname, text="Export Age of Mythology (.brg)")
 
+submodule_register, submodule_unregister = bpy.utils.register_submodule_factory(__package__, (
+    'brg_export', 
+    'brg_import', 
+    'brg_util'
+))
+
 def register():
     bpy.utils.register_class(IMPORT_BRG)
     bpy.utils.register_class(AoMPreferences)
@@ -196,12 +202,14 @@ def register():
     os.system('cls') # clear the cmd, temponary for debug
     bpy.types.TOPBAR_MT_file_import.append(menu_func_import)
     bpy.types.TOPBAR_MT_file_export.append(menu_func_export)
+    submodule_register()
 
 def unregister():
     bpy.utils.unregister_class(IMPORT_BRG)
     bpy.utils.unregister_class(AoMPreferences)
     bpy.types.TOPBAR_MT_file_import.remove(menu_func_import)
     bpy.types.TOPBAR_MT_file_export.remove(menu_func_export)
+    submodule_unregister()
 
 def reload_scripts(): # reload all subscripts when reloading main script
     reload(brg_util)

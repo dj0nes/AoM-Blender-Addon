@@ -98,7 +98,7 @@ class BRGImporter:
             scn.frame_current = 1
             scn.frame_start = 1
             scn.frame_end = math.floor(self.anim_time * scn.render.fps)
-        self.frame_len = self.anim_time * scn.render.fps / self.frames
+        self.frame_len = int(self.anim_time * scn.render.fps / self.frames)
         print ("frame length", self.frame_len)
         if int(self.frame_len) != self.frame_len:
             self.frame_len = int(self.frame_len)
@@ -167,7 +167,7 @@ class BRGImporter:
                 if self.settings.cyclic:
                     fcurve.modifiers.new('CYCLES')
 
-                mesh.shape_keys.use_relative = False
+                # mesh.shape_keys.use_relative = False
 
         # load the vertex placeholders
         vertices = []
@@ -304,7 +304,7 @@ class BRGImporter:
 
         # Read attachpoint names. Not correct yet!
         num_points = 0
-        print ("Number of indexes:",self.num_index)
+        print ("attachpoint count:",self.num_index)
         for i in range(self.num_index):
             dupli = file.read_int()
             file.skip(4)
@@ -312,6 +312,7 @@ class BRGImporter:
 
         for i in range(num_points):
             point = file.read_byte()
+            print("point: ", point)
             # pose.bones[str(i)].name = NODE_NAMES[point]
             # print(NODE_NAMES[point], str(i),str(point))
 
@@ -362,3 +363,8 @@ class BRGImporter:
             file.skip(2)
             sfx_length = file.read_short()
             sfx_name = file.read(sfx_length)
+
+def register():
+    pass
+def unregister():
+    pass

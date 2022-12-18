@@ -81,3 +81,9 @@ class BRGExporter:
 
     def write_materials():
         pass
+
+
+def register():
+    pass
+def unregister():
+    pass

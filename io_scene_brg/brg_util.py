@@ -334,3 +334,8 @@ def load_image(file, addon_prefs, texture_name):
         #     print("No local file found, %s.ddt copied over from AoM installation forlder. Use an external tool for conversion." % texture_name)
         # else:
     return img
+
+def register():
+    pass
+def unregister():
+    pass
